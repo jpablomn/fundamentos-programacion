@@ -132,15 +132,15 @@ ejercicio(
 único** de la lista, ordenados de menor a mayor. `n` comienza en 1.
 
 **Ejemplo:**
-`enesimo_unico([3, 1, 4, 1, 5, 9, 2, 6, 5], 3)` → `4`
-(los únicos ordenados son `[1, 2, 3, 4, 5, 6, 9]`, el 3.º es `4`)""",
+`enesimo_unico([3, 1, 4, 1, 5, 9, 2, 6, 5], 4)` → `4`
+(los únicos ordenados son `[1, 2, 3, 4, 5, 6, 9]`, el 4.º es `4`)""",
     r"""
 def enesimo_unico(lista, n):
     # ✏️ TU CÓDIGO AQUÍ
     return None
 """,
     r"""
-revisar("ejemplo base", enesimo_unico([3, 1, 4, 1, 5, 9, 2, 6, 5], 3) == 4)
+revisar("ejemplo base", enesimo_unico([3, 1, 4, 1, 5, 9, 2, 6, 5], 4) == 4)
 revisar("primer unico", enesimo_unico([5, 3, 1, 3, 5], 1) == 1)
 revisar("todos distintos", enesimo_unico([10, 20, 30], 2) == 20)
 """,
@@ -515,7 +515,7 @@ def _validar():
 
     def enesimo_unico(lista, n):
         return sorted(set(lista))[n - 1]
-    assert enesimo_unico([3, 1, 4, 1, 5, 9, 2, 6, 5], 3) == 4
+    assert enesimo_unico([3, 1, 4, 1, 5, 9, 2, 6, 5], 4) == 4
     assert enesimo_unico([5, 3, 1, 3, 5], 1) == 1
 
     def agrupar_por_ciudad(ventas):

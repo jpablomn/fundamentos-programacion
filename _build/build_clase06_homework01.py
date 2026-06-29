@@ -7,6 +7,22 @@ from hwtools import construir_homework, validar  # noqa: E402
 
 NI = 'raise NotImplementedError("Implementa esta función")'
 
+# Ruta que funciona desde el notebook (curso/clase06/) y durante la validación de build.
+# En el notebook: ../datasets/transacciones.csv
+# En build (cwd = _build/): ../curso/datasets/transacciones.csv  — pero usamos abs en validar
+_RUTA_NOTEBOOK = os.path.join('..', 'datasets', 'transacciones.csv')
+
+# Helper: primera línea de test que establece _df_ruta correctamente
+_SETUP_RUTA = [
+    "import os, pandas as pd",
+    (
+        "_df_ruta = os.path.join('..', 'datasets', 'transacciones.csv') "
+        "if os.path.exists(os.path.join('..', 'datasets', 'transacciones.csv')) "
+        "else os.path.abspath(os.path.join(os.path.dirname(os.path.abspath('.')), "
+        "'curso', 'datasets', 'transacciones.csv'))"
+    ),
+]
+
 ejercicios = [
     # ---- 1 ---------------------------------------------------------------- #
     {
@@ -35,8 +51,7 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta)",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'))",
             "_res = participacion_ciudades(_df)",
             "assert 'ciudad' in _res.columns",
             "assert 'total' in _res.columns",
@@ -72,14 +87,12 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta)",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'))",
             "_cat = categoria_mas_variable(_df)",
             "assert isinstance(_cat, str)",
             "assert _cat in _df['categoria'].unique()",
         ],
         "ocultos": [
-            "# El resultado debe ser la categoría con std máximo",
             "_stds = _df.groupby('categoria')['monto'].std()",
             "assert _cat == _stds.idxmax()",
         ],
@@ -99,11 +112,13 @@ ejercicios = [
             "**Ejemplo:** `resumen_ciudad(df, 'Bogota')['n_transacciones']` → número entero."
         ),
         "plantilla": (
+            "import pandas as pd\n\n"
             "def resumen_ciudad(df, ciudad):\n"
             "    # ✏️ TU CÓDIGO AQUÍ\n"
             "    {NI}"
         ).format(NI=NI),
         "solucion": (
+            "import pandas as pd\n\n"
             "def resumen_ciudad(df, ciudad):\n"
             "    sub = df[df['ciudad'] == ciudad]['monto']\n"
             "    return pd.Series({\n"
@@ -116,10 +131,9 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta)",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'))",
             "_s = resumen_ciudad(_df, 'Bogota')",
-            "assert hasattr(_s, 'index')  # es una Series",
+            "assert hasattr(_s, 'index')",
             "assert 'n_transacciones' in _s.index",
             "assert 'total' in _s.index",
             "assert 'promedio' in _s.index",
@@ -151,18 +165,14 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta)",
-            "# Crear duplicado artificial",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'))",
             "_df_dup = pd.concat([_df, _df.head(3)], ignore_index=True)",
             "_df_limpio = eliminar_duplicados(_df_dup)",
             "assert len(_df_limpio) == len(_df)",
             "assert _df_limpio['id'].nunique() == len(_df_limpio)",
         ],
         "ocultos": [
-            "# El original no debe modificarse",
             "assert len(_df_dup) == len(_df) + 3",
-            "# Primera aparición conservada",
             "assert list(_df_limpio['id'][:3]) == list(_df['id'][:3])",
         ],
     },
@@ -189,17 +199,14 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta, parse_dates=['fecha'])",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'), parse_dates=['fecha'])",
             "_dfac = ventas_acumuladas(_df)",
             "assert 'acumulado' in _dfac.columns",
             "assert len(_dfac) == len(_df)",
             "assert _dfac['acumulado'].iloc[-1] == _df['monto'].sum()",
         ],
         "ocultos": [
-            "# Debe estar ordenado por fecha",
             "assert (_dfac['fecha'].diff().dropna() >= pd.Timedelta(0)).all()",
-            "# El acumulado es monotónico creciente",
             "assert (_dfac['acumulado'].diff().dropna() >= 0).all()",
         ],
     },
@@ -232,8 +239,7 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta)",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'))",
             "_res = comparar_medianas(_df)",
             "assert 'metodo_pago' in _res.columns",
             "assert 'mediana' in _res.columns",
@@ -273,10 +279,8 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd, tempfile",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta)",
-            "with tempfile.NamedTemporaryFile(suffix='.csv', delete=False) as _f:",
-            "    _ruta_tmp = _f.name",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'))",
+            "with tempfile.NamedTemporaryFile(suffix='.csv', delete=False) as _f: _ruta_tmp = _f.name",
             "_n = exportar_atipicos(_df, _ruta_tmp)",
             "assert isinstance(_n, int)",
             "assert _n >= 0",
@@ -284,11 +288,10 @@ ejercicios = [
         "ocultos": [
             "_df_out = pd.read_csv(_ruta_tmp)",
             "assert len(_df_out) == _n",
-            "# Verificar que son realmente atípicos",
             "_z = (_df['monto'] - _df['monto'].mean()) / _df['monto'].std()",
             "_expected = int((_z.abs() > 2).sum())",
             "assert _n == _expected",
-            "import os; os.unlink(_ruta_tmp)",
+            "os.unlink(_ruta_tmp)",
         ],
     },
     # ---- 8 ---------------------------------------------------------------- #
@@ -323,17 +326,14 @@ ejercicios = [
         ),
         "visibles": [
             "import os, pandas as pd",
-            "ruta = os.path.join('..', 'datasets', 'transacciones.csv')",
-            "_df = pd.read_csv(ruta, parse_dates=['fecha'])",
+            "_df = pd.read_csv(os.path.join('..', 'datasets', 'transacciones.csv'), parse_dates=['fecha'])",
             "_res = ventas_por_trimestre(_df)",
             "assert 'trimestre' in _res.columns",
             "assert 'total' in _res.columns",
             "assert len(_res) >= 1",
         ],
         "ocultos": [
-            "# Los trimestres deben ser valores válidos (1, 2, 3 o 4)",
             "assert _res['trimestre'].between(1, 4).all()",
-            "# El total debe sumar el monto global",
             "assert abs(_res['total'].sum() - _df['monto'].sum()) < 1",
         ],
     },
@@ -353,8 +353,7 @@ meta = {
    está bien, verás ✅; si no, saltará un `AssertionError`.
 4. Tu objetivo: que **todas** las celdas de tests pasen sin error.
 
-> 🗂️ Todos los ejercicios usan el dataset `../datasets/transacciones.csv`.
-> Cada ejercicio lo carga por su cuenta — no necesitas cargar el dataset antes.
+> 🗂️ Cada ejercicio carga el dataset desde `../datasets/transacciones.csv`.
 
 > ⚠️ Recién abierta, esta tarea **no** corre de principio a fin: las celdas de tests
 > fallarán hasta que implementes cada función. ¡Eso es lo que vas a arreglar!
@@ -384,7 +383,17 @@ Repaso de conceptos ejercitados:
 """,
 }
 
-validar(ejercicios)
+
+# Validar las soluciones de referencia en tiempo de construcción
+# Cambiamos al directorio de un notebook para que los paths relativos funcionen
+_orig_dir = os.getcwd()
+_notebook_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "curso", "clase06")
+os.chdir(os.path.abspath(_notebook_dir))
+try:
+    validar(ejercicios)
+finally:
+    os.chdir(_orig_dir)
+
 construir_homework(
     meta,
     ejercicios,

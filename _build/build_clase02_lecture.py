@@ -221,15 +221,14 @@ code(r"""
 # Cadenas en contexto de negocio.
 ciudad      = "Bogota"
 categoria   = 'tecnologia'
-descripcion = """Laptop gamer
-con 16 GB RAM"""          # str multilínea con triple comilla
+descripcion = "Laptop gamer\ncon 16 GB RAM"   # str con salto de linea
 
 print("Ciudad:     ", ciudad)
-print("Categoría:  ", categoria)
-print("Descripción:", descripcion)
+print("Categoria:  ", categoria)
+print("Descripcion:", descripcion)
 print()
 
-# Operaciones básicas (más en la Clase 4):
+# Operaciones basicas (mas en la Clase 4):
 print("Largo del nombre:", len(ciudad))                    # longitud
 print("En mayúsculas:   ", ciudad.upper())                 # transformar
 print("¿Empieza con B?: ", ciudad.startswith("B"))         # buscar
@@ -970,7 +969,7 @@ code(r"""
 # 5. Python: traducción directa del pseudocódigo.
 
 def clasificar_venta(monto):
-    """Clasifica una venta por su monto en COP."""
+    # Clasifica una venta por su monto en COP.
     if monto > 200000:
         return "alta"
     elif monto > 50000:

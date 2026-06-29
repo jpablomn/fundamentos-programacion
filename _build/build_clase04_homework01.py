@@ -28,7 +28,7 @@ ejercicios = [
         "plantilla": "def contar_palabras(texto):\n    # ✏️ TU CÓDIGO AQUÍ\n    " + NI,
         "solucion": (
             "def contar_palabras(texto):\n"
-            "    puntuacion = '.,;:!?\"\\''()\n"
+            "    puntuacion = set('.,;:!?\"()')\n"
             "    limpio = ''\n"
             "    for c in texto.lower():\n"
             "        if c in puntuacion:\n"
